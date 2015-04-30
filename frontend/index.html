@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    <title>Betfunding</title>
+    <meta charset="UTF-8">
+      
+	<!-- libraries -->
+	<link rel="stylesheet" href="./lib/bootstrap/css/bootstrap.min.css">
+	<script src="./lib/bootstrap/js/bootstrap.min.js"></script>
+	<script src="./lib/jquery/jquery-1.11.1.min.js"></script>
+	<link href="./styles.css" rel="stylesheet" type = "text/css" >
+	</head>
+	
+	<body>
+		<!-- navigation bar -->
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<div class="container max-width-960">
+				<div class="navbar-header">
+					<a href="./index.html"><img src="./eth.png" alt="logo" class="navbar-brand" width="100px"></a>			
+					<a href="#projects" class="navbar-brand nav-text" >Projects</a>
+					<a href="#new-project" class="navbar-brand nav-text" >New project</a>
+					<a href="#faq" class="navbar-brand nav-text" >FAQ</a>
+					<a href="#about" class="navbar-brand nav-text" >About</a>
+				</div>
+			</div>			
+		</nav>
+		
+		
+		<div class="row  margin-top">
+			<!-- Search -->	
+			<div class="container max-width-960 text-center">
+				<form>
+					<div class="input-group col-md-3 center-block">
+						<input type="text" name="search" id="search-value" class="form-control" placeholder="Project ID">
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" onclick="searchProject()">Go</button>
+						</span>
+					</div>
+				</form>
+			</div>
+			
+			<!-- Project info -->
+			<div class="container max-width-960 margin-top" id="project-info">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Project Info</h3>
+					</div>
+					<div class="panel-body">
+						<ul class="list-group">
+							<li class="list-group-item"><strong>ID:</strong> <span id="projectId"></span></li>
+							<li class="list-group-item"><strong>Name:</strong> <span id="projectName"></span></li>
+							<li class="list-group-item"><strong>Creator:</strong> <span id="projectCreator"></span></li>
+							<li class="list-group-item"><strong>End date (mm/dd/yyyy):</strong> <span id="projectEndDate"></span></li>
+							<li class="list-group-item"><strong>Nice bets:</strong> <span id="projectNiceBets"></span></li>
+							<li class="list-group-item"><strong>Bad bets:</strong> <span id="projectBadBets"></span></li>
+							<li class="list-group-item"><strong>Verification:</strong> <span id="projectVerification"></span></li>
+							<li class="list-group-item"><strong>Judge:</strong> <span id="projectJudge"></span></li>
+							<li class="list-group-item"><strong>Description:</strong> <span id="projectDescription"></span></li>
+							<li class="list-group-item"><strong>Bet:</strong>
+								<div class="input-group col-md-3 center-block">
+									<input type="text" class="form-control" id="betAmount" placeholder="Bet amount">
+									<span class="input-group-btn">
+										<button class="btn btn-default" type="button" onclick="bet(true)" >Nice bet</button>
+										<button class="btn btn-default" type="button" onclick="bet(false)" >Negative bet</button>
+									</span>
+								
+								</div>
+							</li>
+						</ul>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		
+		<div class="row" >
+			<div class="container max-width-960 " id="projects"><hr></div>
+		</div>
+		
+		<!-- Projects -->
+		<div class="row separador" >			
+			<div class="container max-width-960">Projects</div>
+		</div>
+		
+		<div class="row text-center margin-top" id="projects">			
+			<div class="container max-width-960">
+				<div class="table-responsive">
+					<table class="table table-striped table-bordered" id="projectsTable">
+						<thead>
+							<tr>
+								<th class="text-center">#</th>
+								<th class="text-center">Name</th>
+								<th class="text-center">End date (mm/dd/yyyy)</th>
+								<th class="text-center">Nice bets</th>
+								<th class="text-center">Bad bets</th>
+							</tr>
+						</thead>
+						<tbody>
+						<!-- -->
+						</tbody>
+					</table>
+				</div>
+		
+			</div>
+		</div>
+		
+		<div class="row" >
+			<div class="container max-width-960 margin-form" id="new-project"><hr></div>
+		</div>		
+		
+		<!-- New project -->
+		<div class="row separador" >			
+			<div class="container max-width-960">New project</div>
+		</div>
+		
+		<div class="row">
+			<div class="container max-width-960 margin-form">
+					<input type="text" class="form-control" id="pname" placeholder="Project name"><br>
+					<input type="text" class="form-control" id="pdate" placeholder="Number of days to complete the project"><br>
+					<input type="text" class="form-control" id="pjudge" placeholder="Who is going to verify it (address)"><br>
+					<input type="text" class="form-control" id="pverification" placeholder="How is going to verify it"><br>
+					<textarea class="form-control" rows="3" id="pdescription" >Write the description and specifications here.</textarea><br>
+					<button type="button" class="btn btn-default btn-lg" onclick="createProject()">Send</button>
+			</div>			
+		</div>
+		<div class="row" >
+			<div class="container max-width-960 margin-form" id="faq"><hr></div>
+		</div>
+		
+		<!-- FAQ -->
+		<div class="row separador">			
+			<div class="container max-width-960">FAQ</div>
+		</div>
+		
+		<div class="container max-width-960 ">
+			<div class="row ">
+				<h3>¿Pregunta 1?</h3>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis tortor eget velit iaculis accumsan. Aenean id pellentesque enim, eget volutpat ante. Vivamus mattis lorem enim, eget eleifend sem vehicula eget. Nulla luctus arcu nec elit accumsan tincidunt. Sed tristique dui ac quam commodo, in iaculis mi auctor.</p>
+				<hr>
+			</div>
+			<div class="row">
+				<h3>¿Pregunta 2?</h3>
+				<p>Suspendisse adipiscing enim dolor, eu blandit nunc faucibus ut. Nulla sapien erat, blandit eu neque ac, lacinia dictum leo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce eu lectus et nunc interdum semper id quis magna. </p>
+				<hr>
+			</div>
+			<div class="row">
+				<h3>¿Pregunta 3?</h3>
+				<p>Phasellus tempor massa dolor, ut convallis magna sodales non. Mauris dapibus elit sit amet aliquet sagittis. Fusce et convallis ligula. Sed ultricies lectus et odio suscipit suscipit. Aenean non gravida dolor. Cras justo justo, dapibus vel euismod non, posuere vitae erat. In molestie magna ut dignissim hendrerit. Nunc ultrices, tortor id gravida auctor, est ante feugiat mauris, id faucibus quam metus vitae augue. Ut sed condimentum magna.</p>
+				<hr>
+			</div>
+			<div class="row">
+				<h3>¿Pregunta 4?</h3>
+				<p>Sed ac pharetra enim, in ultrices arcu. Sed et iaculis lorem. Donec et nisi mattis, varius neque sed, consectetur lectus. Sed mollis orci congue, fermentum velit placerat, bibendum dui. Cras sit amet laoreet metus, ultricies dignissim lorem. Quisque tincidunt eu est porttitor viverra. Cras in lectus sem. </p>
+				<hr>
+			</div>
+			<div class="row">
+				<h3>¿Pregunta 5?</h3>
+				<p>Aenean tincidunt felis egestas, elementum arcu ut, rutrum lacus. Fusce sem purus, posuere non vulputate sit amet, tincidunt sed turpis. Quisque quis purus condimentum, vulputate metus vel, molestie lorem. Curabitur risus mauris, condimentum quis aliquam vitae, blandit luctus magna. Duis mi nunc, rhoncus sit amet dolor ut, commodo mollis lacus.</p>
+				<hr>
+			</div>
+		</div>
+
+		<!-- About -->
+		<div class="row footer" id="about"> 
+			<div class="container max-width-960">
+				<div class="col-md-6">
+					<h2>About Betfunding</h2>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis tortor eget velit iaculis accumsan. Aenean id pellentesque enim, eget volutpat ante. Vivamus mattis lorem enim, eget eleifend sem vehicula eget. Nulla luctus arcu nec elit accumsan tincidunt. Sed tristique dui ac quam commodo, in iaculis mi auctor.</p>
+				</div>
+				<div class="col-md-6 margin-form">
+					Twitter, Facebook, Github, contact, etc.
+				</div>
+			</div>
+		</div>
+		<div class="row footer2">
+			2014-2015 Betfunding
+		</div>
+	</body>
+	<script src="./scripts.js"></script>
+</html>

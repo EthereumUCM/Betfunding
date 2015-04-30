@@ -1,0 +1,67 @@
+body {
+	padding-top: 50px;
+	background-color: #F0F0F0;
+	color: #7C7C7C;
+}
+
+.navbar{
+	background-color:#2C5C84;
+}
+
+.nav-text{
+	color: #FFFFFF !important;
+}
+
+.nav-text:hover{
+	background-color:#346C9B !important;
+} 
+
+li.active2{
+	background-color:#4A8BC2 !important;
+}
+
+.max-width-960{
+	max-width:960px;
+}
+
+.margin-form{
+	margin-top:50px;
+}
+
+hr{
+	background-color: #CCCCCC;
+	height: 1px;
+}
+
+.text-center{
+	text-align:center;
+}
+
+.margin-top{
+	margin-top: 30px;
+}
+
+.footer{
+	background-color:#1F2123;
+}
+
+.footer2{
+	background-color:#000000;
+	text-align:center;
+	padding:8px;
+}
+
+.separador{
+	border-top:solid 1px #CCC;
+	border-bottom:solid 1px #CCC;
+	padding: 30px;
+	margin: 20px 0px;
+	text-align: center;
+	color: #4A8BC2;
+	background-color:#F9F9F9;
+	font-size:2em;
+}
+
+#project-info{
+	display: none;
+}
