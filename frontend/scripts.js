@@ -1,8 +1,7 @@
+/* Test data */
+var mainContractAddress = '0x' + '6383a7b55cc0f807467d5c42af7eb6a1a64c1fcc';
 
-var mainContractAddress = '0x' + '8d696765e284d23c8aa5e351e951d21c1eb30bc8';
-
-var abiMainContract = [{"constant":false,"inputs":[],"name":"getNumProjects","outputs":[{"name":"r","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectName","type":"string32"},{"name":"projectDesciption","type":"string32"},{"name":"expirationDate","type":"uint256"},{"name":"verificationMethod","type":"string32"},{"name":"judge","type":"address"}],"name":"createProject","outputs":[],"type":"function"},{"constant":false,"inputs":[],"name":"createProject2","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectCreator","outputs":[{"name":"add","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNiceBets","outputs":[{"name":"amount","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectEndDate","outputs":[{"name":"date","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNumNiceBets","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"},{"name":"isNiceBet","type":"bool"},{"name":"amount","type":"uint256"}],"name":"bid","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectVerification","outputs":[{"name":"verificacion","type":"string32"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectDescription","outputs":[{"name":"description","type":"string32"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getBadBets","outputs":[{"name":"amount","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectJudge","outputs":[{"name":"add","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNumBadBets","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectName","outputs":[{"name":"name","type":"string32"}],"type":"function"}];
-
+var abiMainContract = [{"constant":true,"inputs":[],"name":"getNumProjects","outputs":[{"name":"r","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectName","type":"string32"},{"name":"projectDesciption","type":"string32"},{"name":"expirationDate","type":"uint256"},{"name":"verificationMethod","type":"string32"},{"name":"judge","type":"address"}],"name":"createProject","outputs":[],"type":"function"},{"constant":false,"inputs":[],"name":"createProject2","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectCreator","outputs":[{"name":"add","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNiceBets","outputs":[{"name":"amount","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectEndDate","outputs":[{"name":"date","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNumNiceBets","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectVerification","outputs":[{"name":"verificacion","type":"string32"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectDescription","outputs":[{"name":"description","type":"string32"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getBadBets","outputs":[{"name":"amount","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"},{"name":"isNiceBet","type":"bool"}],"name":"bid","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectJudge","outputs":[{"name":"add","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNumBadBets","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectName","outputs":[{"name":"name","type":"string32"}],"type":"function"}];
 var mainContract = web3.eth.contractFromAbi(abiMainContract); // Old version
 // var MyContract = web3.eth.contract(abi); // New versions
 
@@ -21,7 +20,6 @@ function createProject() {
 	var pverification = document.getElementById("pverification").value;
 	var pdescription = document.getElementById("pdescription").value;
 	var numDays = parseInt(document.getElementById("pdate").value);
-	alert("a");
 	var pdate = Date.now() + numDays*24*60*60; // timestamp
 	
 	//mainContractInstance.createProject(pname, pdescription, pdate, pverification, pjudge);alert("b");
@@ -33,31 +31,13 @@ function bet(isNiceBet) {
 	var pid = parseInt(document.getElementById("projectId").value);	
 	var amount = parseInt(document.getElementById("betAmount").value);	
 	
-	mainContractInstance.bid(pid, isNiceBet, amount);
-}
-
-// ** Deprecated
-// Return the address of a project's contract given its 'id'
-function getProjectAddress(id) {
-	var res = mainContractInstance.call().getProjectAddress(id);
-	
-	return res;
+	mainContractInstance.transact({value: amount}).bid(pid, isNiceBet);
 }
 
 // Number of projects created
 function getNumProjects() {
 	var res = parseInt(mainContractInstance.call().getNumProjects());
 	
-	return res;
-}
-
-// ** Deprecated
-// Return an instance of a project's contract given its 'id'
-function getProjectInstance(id) {
-	var address = mainContractInstance.call().getProjectAddress(id);
-	
-	var res = new projectContract(address);
-
 	return res;
 }
 
@@ -124,14 +104,14 @@ function getBadBetsAmount(id) {
 
 // Return a list of bets
 function getProjectListBets1(id) {	
-	// TODO
+	// TODO (?)
 }
 
 function getProjectListBets2(id) {	
-	// TODO
+	// TODO (?)
 }
 
-// TODO: List of bets
+// TODO: List of bets  (?)
 function getProject(id) {
 
 	var project = {

@@ -10,7 +10,7 @@ contract Betfunding {
     function createProject(address proponent,
 						   string32 _projectName,
                            string32 _projectDesciption,
-                           uint _expirationDate,
+                           uint256 _expirationDate,
                            string32 _verificationMethod,
 						   address _judge){
         //crea el proyecto y guardar en projectAdress
@@ -34,17 +34,17 @@ contract Betfunding {
 	
 	/** FUNCIONES DE LOS PROYECTOS **/
     
-    function bid(uint256 projectID ,bool isNiceBet, address gambler, uint256 amount){
+    function bid(uint256 projectID ,bool isNiceBet){
 		BetfundingProject project =	projectMapping[projectID];
         if(isNiceBet){
             project.numNiceGamblers+=1; 
-            project.niceGamblers[project.numNiceGamblers]=gambler;
-            project.amountBets[gambler]=amount;
+            project.niceGamblers[project.numNiceGamblers]=msg.sender;
+            project.amountBets[msg.sender]=msg.value;
         }
         else{
             project.numBadGamblers+=1;
-            project.badGamblers[project.numBadGamblers]=gambler;
-            project.amountBets[gambler]=amount;
+            project.badGamblers[project.numBadGamblers]=msg.sender;
+            project.amountBets[msg.sender]=msg.value;
         }
     }
 	 
@@ -122,10 +122,3 @@ contract Betfunding {
 		address verificationJudge;
 	}
 }
-
-/**********************************/
-
-
-
-
-
