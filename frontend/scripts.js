@@ -16,7 +16,7 @@ postProjectsTable();
 function createProject() {
 
 	var pname = document.getElementById("pname").value;	
-	var pjudge = '0x' + 'b56fcb7cab5fc154b0bb57cc3e99e3b2bfa4ca7a';//document.getElementById("pjudge").value;
+	var pjudge = document.getElementById("pjudge").value;
 	var pverification = document.getElementById("pverification").value;
 	var pdescription = document.getElementById("pdescription").value;
 	var numDays = parseInt(document.getElementById("pdate").value);

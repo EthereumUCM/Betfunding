@@ -7,9 +7,8 @@ contract Betfunding {
     /** 
      * Crea un proyecto desde la direccion de la persona que lo propone
     */
-    function createProject(address proponent,
-						   string32 _projectName,
-                           string32 _projectDesciption,
+    function createProject(string32 _projectName,
+                           string32 _projectDescription,
                            uint256 _expirationDate,
                            string32 _verificationMethod,
 						   address _judge){
@@ -17,7 +16,8 @@ contract Betfunding {
 		numProjects += 1;
 		BetfundingProject newProject = projectMapping[numProjects];
         newProject.projectName = _projectName;
-		newProject.projectDesciption =_projectDesciption;
+		newProject.projectCreator = msg.sender;
+		newProject.projectDescription =_projectDescription;
 		newProject.expirationDate = _expirationDate;
 		newProject.verificationMethod = _verificationMethod;
 		newProject.verificationJudge = _judge;
@@ -103,19 +103,20 @@ contract Betfunding {
 		else
 			project.projectVerified=false;
 	}
-	 
+	
 	struct BetfundingProject{
 	    uint256 numNiceGamblers;
 	    mapping(uint256 => address) niceGamblers;
 	
     	uint256 numBadGamblers;
     	mapping(uint256 => address) badGamblers;
+		
     	mapping(address => uint256) amountBets;
     
-    	uint256 numProjects;
+    	address projectCreator;
     	string32 projectName;
-    	string32 projectDesciption;
-    	uint expirationDate;
+    	string32 projectDescription;
+    	uint256 expirationDate;
     	string32 verificationMethod;
 	 
 		bool projectVerified;
