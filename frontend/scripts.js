@@ -7,11 +7,11 @@ var mainContract = web3.eth.contractFromAbi(abiMainContract); // Old version
 
 var mainContractInstance = new mainContract(mainContractAddress);
 
-
+// List of projects
 postProjectsTable();
 
-/* Main Contract */
-//
+/* Main contract */
+
 // Send the information to the blockchain to create a contract
 function createProject() {
 
@@ -22,8 +22,7 @@ function createProject() {
 	var numDays = parseInt(document.getElementById("pdate").value);
 	var pdate = Date.now() + numDays*24*60*60; // timestamp
 	
-	//mainContractInstance.createProject(pname, pdescription, pdate, pverification, pjudge);alert("b");
-	mainContractInstance.createProject2();
+	mainContractInstance.createProject(pname, pdescription, pdate, pverification, pjudge);
 }
 
 // Put a bet into the blockchain
@@ -32,9 +31,12 @@ function bet(isNiceBet) {
 	var amount = parseInt(document.getElementById("betAmount").value);	
 	
 	mainContractInstance.transact({value: amount}).bid(pid, isNiceBet);
+	// mainContractInstance.sendTransaction({value: amount}).bid(pid, isNiceBet); // New versions
 }
 
-// Number of projects created
+
+/* Getters */
+
 function getNumProjects() {
 	var res = parseInt(mainContractInstance.call().getNumProjects());
 	

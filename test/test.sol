@@ -19,7 +19,7 @@ contract Betfunding {
         numProjects += 1;
     }
         
-    function bid(uint256 projectID ,bool isNiceBet, uint256 amount){
+    function bid(uint256 projectID ,bool isNiceBet){
         if(isNiceBet){
             numNiceBets += 1;
         }

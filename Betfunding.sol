@@ -82,6 +82,12 @@ contract Betfunding {
         }
         return amount;
     }
+	
+	function getNumNiceBets(uint256 projectID) returns (uint256 num){
+        BetfundingProject project =	projectMapping[projectID];
+		
+		return project.numNiceGamblers;
+    }
     
     function getBadBets(uint256 projectID) returns (uint256 amount){
 		BetfundingProject project =	projectMapping[projectID];
@@ -93,7 +99,53 @@ contract Betfunding {
         }
         return amount;
     }
-	 
+	
+	function getNumBadBets(uint256 projectID) returns (uint256 num){
+        BetfundingProject project =	projectMapping[projectID];
+		
+		return project.numBadGamblers;
+    }
+	
+	function getNumProjects() constant returns (uint256 num){
+        
+		return numProjects;
+    }
+	
+	function getProjectName(uint256 projectID) returns (string32 name){
+        BetfundingProject project =	projectMapping[projectID];
+		
+		return project.projectName;
+    }
+	
+	function getProjectEndDate(uint256 projectID) returns (uint256 date){
+        BetfundingProject project =	projectMapping[projectID];
+		
+		return project.expirationDate;
+    }
+	
+	function getProjectVerification(uint256 projectID) returns (string32 verificacion){
+        BetfundingProject project =	projectMapping[projectID];
+		
+		return project.verificationMethod;
+    }
+	
+	function getProjectJudge(uint256 projectID) returns (address addr){
+        BetfundingProject project =	projectMapping[projectID];
+		
+		return project.verificationJudge;
+    }
+	
+	function getProjectDescription(uint256 projectID) returns (string32 description){
+        BetfundingProject project =	projectMapping[projectID];
+		
+		return project.projectDescription;
+    }
+	
+	function getProjectCreator(uint256 projectID) returns (address addr){
+        BetfundingProject project =	projectMapping[projectID];
+		
+		return project.projectCreator;
+    }
 	 
 	function verifyProject(uint256 projectID){
 		BetfundingProject project =	projectMapping[projectID];
