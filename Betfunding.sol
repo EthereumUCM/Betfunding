@@ -23,19 +23,21 @@ contract Betfunding {
 	
 	/** Projects functions **/
 	
-	/// TODO: Check if the user has bet before
 	function bid(uint256 projectID, bool isNiceBet){
 		BetfundingProject project =	projectMapping[projectID];
 		
-		if(isNiceBet){
-			project.numNiceGamblers += 1; 
-			project.niceGamblers[project.numNiceGamblers] = msg.sender;
-			project.amountBets[msg.sender] = msg.value;
-		}
-		else{
-			project.numBadGamblers += 1;
-			project.badGamblers[project.numBadGamblers] = msg.sender;
-			project.amountBets[msg.sender] = msg.value;
+		/// Checks that the user has not bet before from the same address
+		if(project.amountBets[msg.sender] == 0){		
+			if(isNiceBet){
+				project.numNiceGamblers += 1; 
+				project.niceGamblers[project.numNiceGamblers] = msg.sender;
+				project.amountBets[msg.sender] = msg.value;
+			}
+			else{
+				project.numBadGamblers += 1;
+				project.badGamblers[project.numBadGamblers] = msg.sender;
+				project.amountBets[msg.sender] = msg.value;
+			}
 		}
 	}
 	
