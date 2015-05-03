@@ -1,11 +1,34 @@
 contract Betfunding {
 	
+	struct BetfundingProject{
+		uint numNiceGamblers;
+		mapping(uint => address) niceGamblers;
+		
+		uint numBadGamblers;
+		mapping(uint => address) badGamblers;
+		
+		mapping(address => uint) amountBets;
+		
+		address projectCreator;
+		string32 projectName;
+		string32 projectDescription;
+		uint expirationDate;
+		string32 verificationMethod;
+		
+		bool projectVerified;
+		address verificationJudge;
+	}
+	
+	/// List of projects
+	mapping(uint => BetfundingProject) projectMapping;
+	uint numProjects;
+	
 	function Betfunding() {
 		numProjects = 0;
 	}
 	
 	/// Creates a new project
-	function createProject(string32 _projectName, string32 _projectDescription, uint256 _expirationDate, string32 _verificationMethod, address _judge){
+	function createProject(string32 _projectName, string32 _projectDescription, uint _expirationDate, string32 _verificationMethod, address _judge){
 		numProjects += 1;
 		
 		BetfundingProject newProject = projectMapping[numProjects];
@@ -17,17 +40,14 @@ contract Betfunding {
 		newProject.verificationJudge = _judge;
 	}
 	
-	/// List of projects
-	mapping(uint256 => BetfundingProject) projectMapping;
-	uint256 numProjects;
-	
 	/** Projects functions **/
 	
-	function bid(uint256 projectID, bool isNiceBet){
+	function bid(uint projectID, bool isNiceBet){
 		BetfundingProject project =	projectMapping[projectID];
 		
 		/// Checks that the user has not bet before from the same address
-		if(project.amountBets[msg.sender] == 0){		
+		/// COMMENTED FOR TESTING PURPOSES
+		///if(project.amountBets[msg.sender] == 0){		
 			if(isNiceBet){
 				project.numNiceGamblers += 1; 
 				project.niceGamblers[project.numNiceGamblers] = msg.sender;
@@ -38,49 +58,53 @@ contract Betfunding {
 				project.badGamblers[project.numBadGamblers] = msg.sender;
 				project.amountBets[msg.sender] = msg.value;
 			}
-		}
+		///}
 	}
 	
-	function checkExpirationDate(uint256 projectID) returns (bool hasExpired){
+	function checkExpirationDate(uint projectID) returns (bool hasExpired){
 		BetfundingProject project =	projectMapping[projectID];
 		
-		if(block.timestamp < project.expirationDate)
+		if(block.timestamp < project.expirationDate/1000)
 			return true;
 		else 
 			return false;
 	}
 	
 	/// TODO
-	function checkProjectEnd(uint256 projectID){
+	function checkProjectEnd(uint projectID){
 		BetfundingProject project =	projectMapping[projectID];
 		
-		if(checkExpirationDate(projectID) && getNiceBets(projectID)>1 && project.projectVerified){
+		if(checkExpirationDate(projectID) && getNiceBets(projectID) > 0 && project.projectVerified){
 			/// funcion de ponderacion para enviar el dinero a los que apostaron
 		}
 		else{
-			uint256 numBets = 0;
-			while(numBets < project.numBadGamblers){
+			/// The project has not been done
+			/// TODO: estos tambien tienen que recibir mas dinero del que apostaron
+			uint numBets = 1;
+			while(numBets <= project.numBadGamblers){
 				address a = project.badGamblers[numBets];
-            	uint amount =  project.amountBets[project.badGamblers[numBets]];
+            	uint amount = project.amountBets[project.badGamblers[numBets]];
 				a.send(amount);
 			}
 		}
 	}
 	
-	function verifyProject(uint256 projectID){
+	function verifyProject(uint projectID){
 		BetfundingProject project =	projectMapping[projectID];
 		
-		if(checkExpirationDate(projectID) && msg.sender == project.verificationJudge)
-			project.projectVerified = true;
-		else
-			project.projectVerified = false;
+		if(msg.sender == project.verificationJudge){
+			if(checkExpirationDate(projectID))
+				project.projectVerified = true;
+			else
+				project.projectVerified = false;
+		}
 	}
 	
 	/** Getters */
 	
-	function getNiceBets(uint256 projectID) returns (uint256 amount){
+	function getNiceBets(uint projectID) returns (uint amount){
 		BetfundingProject project =	projectMapping[projectID];
-		uint256 numBets = 1;
+		uint numBets = 1;
 		amount = 0;
 		
 		while(numBets <= project.numNiceGamblers){
@@ -91,15 +115,15 @@ contract Betfunding {
 		return amount;
 	}
 	
-	function getNumNiceBets(uint256 projectID) returns (uint256 num){
+	function getNumNiceBets(uint projectID) returns (uint num){
 		BetfundingProject project =	projectMapping[projectID];
 		
 		return project.numNiceGamblers;
 	}
 	
-	function getBadBets(uint256 projectID) returns (uint256 amount){
+	function getBadBets(uint projectID) returns (uint amount){
 		BetfundingProject project =	projectMapping[projectID];
-		uint256 numBets = 1;
+		uint numBets = 1;
 		amount = 0;
 		
 		while(numBets <= project.numBadGamblers){
@@ -110,69 +134,50 @@ contract Betfunding {
 		return amount;
 	}
 	
-	function getNumBadBets(uint256 projectID) returns (uint256 num){
+	function getNumBadBets(uint projectID) returns (uint num){
 		BetfundingProject project =	projectMapping[projectID];
 		
 		return project.numBadGamblers;
 	}
 	
-	function getNumProjects() constant returns (uint256 num){
+	function getNumProjects() constant returns (uint num){
 		
 		return numProjects;
 	}
 	
-	function getProjectName(uint256 projectID) returns (string32 name){
+	function getProjectName(uint projectID) returns (string32 name){
 		BetfundingProject project =	projectMapping[projectID];
 		
 		return project.projectName;
 	}
 	
-	function getProjectEndDate(uint256 projectID) returns (uint256 date){
+	function getProjectEndDate(uint projectID) returns (uint date){
 		BetfundingProject project =	projectMapping[projectID];
 		
 		return project.expirationDate;
 	}
 	
-	function getProjectVerification(uint256 projectID) returns (string32 verificacion){
+	function getProjectVerification(uint projectID) returns (string32 verificacion){
 		BetfundingProject project =	projectMapping[projectID];
 		
 		return project.verificationMethod;
 	}
 	
-	function getProjectJudge(uint256 projectID) returns (address addr){
+	function getProjectJudge(uint projectID) returns (address addr){
 		BetfundingProject project =	projectMapping[projectID];
 		
 		return project.verificationJudge;
 	}
 	
-	function getProjectDescription(uint256 projectID) returns (string32 description){
+	function getProjectDescription(uint projectID) returns (string32 description){
 		BetfundingProject project =	projectMapping[projectID];
 		
 		return project.projectDescription;
 	}
 	
-	function getProjectCreator(uint256 projectID) returns (address addr){
+	function getProjectCreator(uint projectID) returns (address addr){
 		BetfundingProject project =	projectMapping[projectID];
 		
 		return project.projectCreator;
-	}
-	
-	struct BetfundingProject{
-		uint256 numNiceGamblers;
-		mapping(uint256 => address) niceGamblers;
-		
-		uint256 numBadGamblers;
-		mapping(uint256 => address) badGamblers;
-		
-		mapping(address => uint256) amountBets;
-		
-		address projectCreator;
-		string32 projectName;
-		string32 projectDescription;
-		uint256 expirationDate;
-		string32 verificationMethod;
-		
-		bool projectVerified;
-		address verificationJudge;
 	}
 }

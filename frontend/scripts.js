@@ -1,7 +1,8 @@
 /* Test data */
-var mainContractAddress = '0x' + '6383a7b55cc0f807467d5c42af7eb6a1a64c1fcc';
+var mainContractAddress = '0x' + '2d61b5e6cf7817030789f0ad4ea80abba37ce2a4';
 
-var abiMainContract = [{"constant":true,"inputs":[],"name":"getNumProjects","outputs":[{"name":"r","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectName","type":"string32"},{"name":"projectDesciption","type":"string32"},{"name":"expirationDate","type":"uint256"},{"name":"verificationMethod","type":"string32"},{"name":"judge","type":"address"}],"name":"createProject","outputs":[],"type":"function"},{"constant":false,"inputs":[],"name":"createProject2","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectCreator","outputs":[{"name":"add","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNiceBets","outputs":[{"name":"amount","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectEndDate","outputs":[{"name":"date","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNumNiceBets","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectVerification","outputs":[{"name":"verificacion","type":"string32"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectDescription","outputs":[{"name":"description","type":"string32"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getBadBets","outputs":[{"name":"amount","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"},{"name":"isNiceBet","type":"bool"}],"name":"bid","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectJudge","outputs":[{"name":"add","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNumBadBets","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectName","outputs":[{"name":"name","type":"string32"}],"type":"function"}];
+var abiMainContract = [{"constant":true,"inputs":[],"name":"getNumProjects","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_projectName","type":"string32"},{"name":"_projectDescription","type":"string32"},{"name":"_expirationDate","type":"uint256"},{"name":"_verificationMethod","type":"string32"},{"name":"_judge","type":"address"}],"name":"createProject","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectCreator","outputs":[{"name":"addr","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNiceBets","outputs":[{"name":"amount","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectEndDate","outputs":[{"name":"date","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNumNiceBets","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectVerification","outputs":[{"name":"verificacion","type":"string32"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"checkProjectEnd","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectDescription","outputs":[{"name":"description","type":"string32"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"checkExpirationDate2","outputs":[{"name":"hasExpired","type":"bool"},{"name":"a","type":"uint256"},{"name":"b","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getBadBets","outputs":[{"name":"amount","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"},{"name":"isNiceBet","type":"bool"}],"name":"bid","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectJudge","outputs":[{"name":"addr","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"checkExpirationDate","outputs":[{"name":"hasExpired","type":"bool"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNumBadBets","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"verifyProject","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectName","outputs":[{"name":"name","type":"string32"}],"type":"function"}];
+
 var mainContract = web3.eth.contractFromAbi(abiMainContract); // Old version
 // var MyContract = web3.eth.contract(abi); // New versions
 
@@ -20,14 +21,15 @@ function createProject() {
 	var pverification = document.getElementById("pverification").value;
 	var pdescription = document.getElementById("pdescription").value;
 	var numDays = parseInt(document.getElementById("pdate").value);
-	var pdate = Date.now() + numDays*24*60*60; // timestamp
+		
+	var pdate = Date.now() + (numDays*24*60*60*1000); // timestamp
 	
 	mainContractInstance.createProject(pname, pdescription, pdate, pverification, pjudge);
 }
 
 // Put a bet into the blockchain
 function bet(isNiceBet) {
-	var pid = parseInt(document.getElementById("projectId").value);	
+	var pid = parseInt(document.getElementById("projectId").innerHTML);	
 	var amount = parseInt(document.getElementById("betAmount").value);	
 	
 	mainContractInstance.transact({value: amount}).bid(pid, isNiceBet);
@@ -139,7 +141,7 @@ function postProject(id) {
 	var ok;
 	var numProjects = getNumProjects();
 	
-	if(id < numProjects){
+	if(id <= numProjects && id > 0){
 		var project = getProject(id);
 		
 		document.getElementById("projectId").innerText = project["id"];
@@ -169,7 +171,7 @@ function postProjectsTable() {
 	var numProjects = getNumProjects();	
 	var tbody = document.getElementById("projectsTable").tBodies[0];
 	
-	for(var i = 0; i < numProjects; i++){
+	for(var i = 1; i <= numProjects; i++){
 		var row = tbody.insertRow(0);
 		
 		var cell1 = row.insertCell(0); // id
@@ -195,3 +197,22 @@ function searchProject() {
 		alert("There is no project with id " + id); // error message
 	}
 }
+
+/* Test */
+
+function checkExpirationDate(id) {	
+	var res = mainContractInstance.call().checkExpirationDate2(id);
+	
+	return res;
+}
+
+
+
+
+
+
+
+
+
+
+
