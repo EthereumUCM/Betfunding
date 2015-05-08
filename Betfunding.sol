@@ -11,7 +11,7 @@ contract Betfunding {
 		
 		address projectCreator;
 		string32 projectName;
-		string32 projectDescription;
+		string32 projectDescription; // TODO: There is no text type (string array (?))
 		uint expirationDate;
 		string32 verificationMethod;
 		
@@ -70,21 +70,44 @@ contract Betfunding {
 			return false;
 	}
 	
-	/// TODO
 	function checkProjectEnd(uint projectID){
 		BetfundingProject project =	projectMapping[projectID];
 		
 		if(checkExpirationDate(projectID) && getNiceBets(projectID) > 0 && project.projectVerified){
-			/// funcion de ponderacion para enviar el dinero a los que apostaron
+			/// The project has been done
+			var niceAmount = getNiceBets(projectID);
+			var badAmount = getBadBets(uint projectID);
+			var totalAmount = niceAmount + badAmount;
+						
+			uint numBets = 1;
+			uint sum = (project.numNiceGamblers * (project.numNiceGamblers + 1)) / 2;
+			while(numBets <= project.numNiceGamblers){
+				address a = project.niceGamblers[numBets];
+				uint amountBet = project.amountBets[project.niceGamblers[numBets]];
+				
+				/// There are no decimals, that's why we have to multiply it and then divide it by 1000
+				/// Weighed by order and amount
+				uint aux = amountBet + (((1000*(project.numNiceGamblers-(numBets-1))/sum + 1000*amountBet/niceAmount)/2)*badAmount)/1000;
+				
+				a.send(aux);
+			}
 		}
 		else{
 			/// The project has not been done
-			/// TODO: estos tambien tienen que recibir mas dinero del que apostaron
+			var niceAmount = getNiceBets(projectID);
+			var badAmount = getBadBets(uint projectID);
+			var totalAmount = niceAmount + badAmount;
+						
 			uint numBets = 1;
 			while(numBets <= project.numBadGamblers){
 				address a = project.badGamblers[numBets];
-            	uint amount = project.amountBets[project.badGamblers[numBets]];
-				a.send(amount);
+            	uint amountBet = project.amountBets[project.badGamblers[numBets]];
+				
+				/// There are no decimals, that's why we have to multiply it and then divide it by 1000
+				/// Weighed by amount
+				uint aux = (((amountBet*1000) / badAmount)) * totalAmount) / 1000;
+				
+				a.send(aux);
 			}
 		}
 	}
