@@ -52,8 +52,7 @@ contract Betfunding {
 				project.numNiceGamblers += 1; 
 				project.niceGamblers[project.numNiceGamblers] = msg.sender;
 				project.amountBets[msg.sender] = msg.value;
-			}
-			else{
+			}else{
 				project.numBadGamblers += 1;
 				project.badGamblers[project.numBadGamblers] = msg.sender;
 				project.amountBets[msg.sender] = msg.value;
@@ -80,8 +79,8 @@ contract Betfunding {
 		uint amountBet;
 		uint aux;
 		
-		if(checkExpirationDate(projectID) && getNiceBets(projectID) > 0 && project.projectVerified){
-			/// The project has been done
+		if(project.projectVerified && project.numNiceGamblers > 0){
+			/// The project has been done on time
 			niceAmount = getNiceBets(projectID);
 			badAmount = getBadBets(projectID);
 			totalAmount = niceAmount + badAmount;
@@ -98,9 +97,8 @@ contract Betfunding {
 				
 				a.send(aux);
 			}
-		}
-		else{
-			/// The project has not been done
+		}else if(!checkExpirationDate(projectID) && !project.projectVerified && project.numBadGamblers > 0){
+			/// The project has not been done on time
 			niceAmount = getNiceBets(projectID);
 			badAmount = getBadBets(projectID);
 			totalAmount = niceAmount + badAmount;
@@ -122,11 +120,9 @@ contract Betfunding {
 	function verifyProject(uint projectID){
 		BetfundingProject project =	projectMapping[projectID];
 		
-		if(msg.sender == project.verificationJudge){
-			if(checkExpirationDate(projectID))
+		if(msg.sender == project.verificationJudge && checkExpirationDate(projectID)){
 				project.projectVerified = true;
-			else
-				project.projectVerified = false;
+				checkProjectEnd(projectID);
 		}
 	}
 	
