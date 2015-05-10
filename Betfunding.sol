@@ -72,40 +72,47 @@ contract Betfunding {
 	
 	function checkProjectEnd(uint projectID){
 		BetfundingProject project =	projectMapping[projectID];
+		uint niceAmount;
+		uint badAmount;
+		uint totalAmount;
+		uint numBets;
+		address a;
+		uint amountBet;
+		uint aux;
 		
 		if(checkExpirationDate(projectID) && getNiceBets(projectID) > 0 && project.projectVerified){
 			/// The project has been done
-			var niceAmount = getNiceBets(projectID);
-			var badAmount = getBadBets(uint projectID);
-			var totalAmount = niceAmount + badAmount;
+			niceAmount = getNiceBets(projectID);
+			badAmount = getBadBets(projectID);
+			totalAmount = niceAmount + badAmount;
 						
-			uint numBets = 1;
+			numBets = 1;
 			uint sum = (project.numNiceGamblers * (project.numNiceGamblers + 1)) / 2;
 			while(numBets <= project.numNiceGamblers){
-				address a = project.niceGamblers[numBets];
-				uint amountBet = project.amountBets[project.niceGamblers[numBets]];
+				a = project.niceGamblers[numBets];
+				amountBet = project.amountBets[project.niceGamblers[numBets]];
 				
 				/// There are no decimals, that's why we have to multiply it and then divide it by 1000
 				/// Weighed by order and amount
-				uint aux = amountBet + (((1000*(project.numNiceGamblers-(numBets-1))/sum + 1000*amountBet/niceAmount)/2)*badAmount)/1000;
+				aux = amountBet + (((1000*(project.numNiceGamblers-(numBets-1))/sum + 1000*amountBet/niceAmount)/2)*badAmount)/1000;
 				
 				a.send(aux);
 			}
 		}
 		else{
 			/// The project has not been done
-			var niceAmount = getNiceBets(projectID);
-			var badAmount = getBadBets(uint projectID);
-			var totalAmount = niceAmount + badAmount;
+			niceAmount = getNiceBets(projectID);
+			badAmount = getBadBets(projectID);
+			totalAmount = niceAmount + badAmount;
 						
-			uint numBets = 1;
+			numBets = 1;
 			while(numBets <= project.numBadGamblers){
-				address a = project.badGamblers[numBets];
-            	uint amountBet = project.amountBets[project.badGamblers[numBets]];
+				a = project.badGamblers[numBets];
+            	amountBet = project.amountBets[project.badGamblers[numBets]];
 				
 				/// There are no decimals, that's why we have to multiply it and then divide it by 1000
 				/// Weighed by amount
-				uint aux = (((amountBet*1000) / badAmount)) * totalAmount) / 1000;
+				aux = ((amountBet*totalAmount*1000)/badAmount)/1000;
 				
 				a.send(aux);
 			}
