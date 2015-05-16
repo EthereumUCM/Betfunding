@@ -1,7 +1,7 @@
 /* Test data */
-var mainContractAddress = '0x' + '2d61b5e6cf7817030789f0ad4ea80abba37ce2a4';
+var mainContractAddress = '0x' + '2421ba4cee25aae3e54e0ad497a54370c092e6cc';
 
-var abiMainContract = [{"constant":true,"inputs":[],"name":"getNumProjects","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_projectName","type":"string32"},{"name":"_projectDescription","type":"string32"},{"name":"_expirationDate","type":"uint256"},{"name":"_verificationMethod","type":"string32"},{"name":"_judge","type":"address"}],"name":"createProject","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectCreator","outputs":[{"name":"addr","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNiceBets","outputs":[{"name":"amount","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectEndDate","outputs":[{"name":"date","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNumNiceBets","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectVerification","outputs":[{"name":"verificacion","type":"string32"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"checkProjectEnd","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectDescription","outputs":[{"name":"description","type":"string32"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"checkExpirationDate2","outputs":[{"name":"hasExpired","type":"bool"},{"name":"a","type":"uint256"},{"name":"b","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getBadBets","outputs":[{"name":"amount","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"},{"name":"isNiceBet","type":"bool"}],"name":"bid","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectJudge","outputs":[{"name":"addr","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"checkExpirationDate","outputs":[{"name":"hasExpired","type":"bool"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNumBadBets","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"verifyProject","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectName","outputs":[{"name":"name","type":"string32"}],"type":"function"}];
+var abiMainContract = [{"constant":true,"inputs":[],"name":"getNumProjects","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_projectName","type":"string32"},{"name":"_projectDescription","type":"string32"},{"name":"_expirationDate","type":"uint256"},{"name":"_verificationMethod","type":"string32"},{"name":"_judge","type":"address"}],"name":"createProject","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectCreator","outputs":[{"name":"addr","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNiceBets","outputs":[{"name":"amount","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectEndDate","outputs":[{"name":"date","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNumNiceBets","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectVerification","outputs":[{"name":"verificacion","type":"string32"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"checkProjectEnd","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectDescription","outputs":[{"name":"description","type":"string32"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getBadBets","outputs":[{"name":"amount","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"},{"name":"isNiceBet","type":"bool"}],"name":"bid","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectJudge","outputs":[{"name":"addr","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"checkExpirationDate","outputs":[{"name":"hasExpired","type":"bool"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getNumBadBets","outputs":[{"name":"num","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"verifyProject","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"projectID","type":"uint256"}],"name":"getProjectName","outputs":[{"name":"name","type":"string32"}],"type":"function"}];
 
 var mainContract = web3.eth.contractFromAbi(abiMainContract); // Old version
 // var MyContract = web3.eth.contract(abi); // New versions
@@ -18,7 +18,6 @@ function createProject() {
 
 	var pname = document.getElementById("pname").value;	
 	var pjudge = document.getElementById("pjudge").value;
-	var pverification = document.getElementById("pverification").value;
 	var pdescription = document.getElementById("pdescription").value;
 	var numDays = parseInt(document.getElementById("pdate").value);
 		
@@ -76,12 +75,6 @@ function getNumBadBets(id) {
 	return res;
 }
 
-function getProjectVerification(id) {	
-	var res = mainContractInstance.call().getProjectVerification(id);
-	
-	return res;
-}
-
 function getProjectJudge(id) {	
 	var res = mainContractInstance.call().getProjectJudge(id);
 	
@@ -127,7 +120,6 @@ function getProject(id) {
 		numBadBets: getNumBadBets(id),
 		niceBetsAmount: getNiceBetsAmount(id),
 		badBetsAmount: getBadBetsAmount(id),
-		verification: getProjectVerification(id),
 		judge: getProjectJudge(id),
 		description: getProjectDescription(id)
 	};
@@ -154,11 +146,29 @@ function postProject(id) {
 		document.getElementById("projectNiceBets").innerText = project["niceBetsAmount"] + ' (' + project["numNiceBets"] + ' bets)';
 		document.getElementById("projectBadBets").innerText = project["badBetsAmount"] + ' (' + project["numBadBets"] + ' bets)';
 		
-		document.getElementById("projectVerification").innerText = project["verification"];
 		document.getElementById("projectJudge").innerText = project["judge"];
 		document.getElementById("projectDescription").innerText = project["description"];
 		
 		document.getElementById("project-info").style.display = "block";
+		
+		// Check if the user if the judge of the project
+		var accounts = web3.eth.accounts;
+		for(var i = 0; i < accounts.length; i++){
+			if(project["judge"] == accounts[i])
+				document.getElementById("verificationButton").style.display = "inline";
+		}
+		
+		var timestamp = Date.now();
+		var verified = mainContractInstance.call().getProjectVerified(id);
+		var verified = false;
+		if(timestamp > project["endDate"] || verified){
+			document.getElementById("open").className = "label label-danger right";
+			document.getElementById("open").innerText = "Closed";
+		}else{
+			document.getElementById("open").className = "label label-success right";
+			document.getElementById("open").innerText = "Open";
+		}
+		
 		ok = true;
 	}else{
 		ok = false;
@@ -196,6 +206,12 @@ function searchProject() {
 	if(!postProject(id)){
 		alert("There is no project with id " + id); // error message
 	}
+}
+
+function verify(){
+
+	if(confirm("Are you sure?"))
+		mainContractInstance.verifyProject(parseInt(document.getElementById("projectId").innerHTML));
 }
 
 /* Test */

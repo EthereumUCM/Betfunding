@@ -51,6 +51,10 @@ hr{
 	padding:8px;
 }
 
+.right{
+	float:right;
+}
+
 .separador{
 	border-top:solid 1px #CCC;
 	border-bottom:solid 1px #CCC;
@@ -63,5 +67,9 @@ hr{
 }
 
 #project-info{
+	display: none;
+}
+
+#verificationButton{
 	display: none;
 }

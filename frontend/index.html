@@ -47,14 +47,13 @@
 					</div>
 					<div class="panel-body">
 						<ul class="list-group">
-							<li class="list-group-item"><strong>ID:</strong> <span id="projectId"></span></li>
+							<li class="list-group-item"><strong>ID:</strong> <span id="projectId"></span> <span class="label label-success right" id="open"></span></li>
 							<li class="list-group-item"><strong>Name:</strong> <span id="projectName"></span></li>
 							<li class="list-group-item"><strong>Creator:</strong> <span id="projectCreator"></span></li>
 							<li class="list-group-item"><strong>End date (mm/dd/yyyy):</strong> <span id="projectEndDate"></span></li>
 							<li class="list-group-item"><strong>Nice bets:</strong> <span id="projectNiceBets"></span></li>
 							<li class="list-group-item"><strong>Bad bets:</strong> <span id="projectBadBets"></span></li>
-							<li class="list-group-item"><strong>Verification:</strong> <span id="projectVerification"></span></li>
-							<li class="list-group-item"><strong>Judge:</strong> <span id="projectJudge"></span></li>
+							<li class="list-group-item"><strong>Judge:</strong> <span id="projectJudge"></span> <button class="btn btn-default" type="button" onclick="verify()" id="verificationButton">Verify</button></li>
 							<li class="list-group-item"><strong>Description:</strong> <span id="projectDescription"></span></li>
 							<li class="list-group-item"><strong>Bet:</strong>
 								<div class="input-group col-md-3 center-block">
@@ -118,8 +117,7 @@
 					<input type="text" class="form-control" id="pname" placeholder="Project name"><br>
 					<input type="text" class="form-control" id="pdate" placeholder="Number of days to complete the project"><br>
 					<input type="text" class="form-control" id="pjudge" placeholder="Who is going to verify it (address)"><br>
-					<input type="text" class="form-control" id="pverification" placeholder="How is going to verify it"><br>
-					<textarea class="form-control" rows="3" id="pdescription" >Write the description and specifications here.</textarea><br>
+					<input type="text" class="form-control" id="pdescription" placeholder="Pastebin URL with description and information about the verification process."><br>
 					<button type="button" class="btn btn-default btn-lg" onclick="createProject()">Send</button>
 			</div>			
 		</div>

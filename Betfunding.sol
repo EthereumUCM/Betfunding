@@ -11,9 +11,8 @@ contract Betfunding {
 		
 		address projectCreator;
 		string32 projectName;
-		string32 projectDescription; // TODO: There is no text type (string array (?))
+		string32 projectDescription; // Link to page with description
 		uint expirationDate;
-		string32 verificationMethod;
 		
 		bool projectVerified;
 		address verificationJudge;
@@ -28,7 +27,7 @@ contract Betfunding {
 	}
 	
 	/// Creates a new project
-	function createProject(string32 _projectName, string32 _projectDescription, uint _expirationDate, string32 _verificationMethod, address _judge){
+	function createProject(string32 _projectName, string32 _projectDescription, uint _expirationDate, address _judge){
 		numProjects += 1;
 		
 		BetfundingProject newProject = projectMapping[numProjects];
@@ -36,7 +35,6 @@ contract Betfunding {
 		newProject.projectCreator = msg.sender;
 		newProject.projectDescription =_projectDescription;
 		newProject.expirationDate = _expirationDate;
-		newProject.verificationMethod = _verificationMethod;
 		newProject.verificationJudge = _judge;
 	}
 	
@@ -47,7 +45,7 @@ contract Betfunding {
 		
 		/// Checks that the user has not bet before from the same address
 		/// COMMENTED FOR TESTING PURPOSES
-		///if(project.amountBets[msg.sender] == 0){		
+		if(project.amountBets[msg.sender] == 0){		
 			if(isNiceBet){
 				project.numNiceGamblers += 1; 
 				project.niceGamblers[project.numNiceGamblers] = msg.sender;
@@ -57,7 +55,7 @@ contract Betfunding {
 				project.badGamblers[project.numBadGamblers] = msg.sender;
 				project.amountBets[msg.sender] = msg.value;
 			}
-		///}
+		}
 	}
 	
 	function checkExpirationDate(uint projectID) returns (bool hasExpired){
@@ -183,12 +181,6 @@ contract Betfunding {
 		return project.expirationDate;
 	}
 	
-	function getProjectVerification(uint projectID) returns (string32 verificacion){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		return project.verificationMethod;
-	}
-	
 	function getProjectJudge(uint projectID) returns (address addr){
 		BetfundingProject project =	projectMapping[projectID];
 		
@@ -205,5 +197,11 @@ contract Betfunding {
 		BetfundingProject project =	projectMapping[projectID];
 		
 		return project.projectCreator;
+	}
+	
+	function getProjectVerified(uint projectID) returns (bool val){
+		BetfundingProject project =	projectMapping[projectID];
+		
+		return project.projectVerified;
 	}
 }
