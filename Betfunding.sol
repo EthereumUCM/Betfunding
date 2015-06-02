@@ -18,7 +18,7 @@ contract Betfunding {
 		address verificationJudge;
 	}
 	
-	/// List of projects
+	// List of projects
 	mapping(uint => BetfundingProject) projectMapping;
 	uint numProjects;
 	
@@ -58,6 +58,7 @@ contract Betfunding {
 		}
 	}
 	
+	/// False if the project have ended
 	function checkExpirationDate(uint projectID) returns (bool hasExpired){
 		BetfundingProject project =	projectMapping[projectID];
 		

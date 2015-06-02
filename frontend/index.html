@@ -55,12 +55,12 @@
 							<li class="list-group-item"><strong>Bad bets:</strong> <span id="projectBadBets"></span></li>
 							<li class="list-group-item"><strong>Judge:</strong> <span id="projectJudge"></span> <button class="btn btn-default" type="button" onclick="verify()" id="verificationButton">Verify</button></li>
 							<li class="list-group-item"><strong>Description:</strong> <span id="projectDescription"></span></li>
-							<li class="list-group-item"><strong>Bet:</strong>
+							<li class="list-group-item" id="betBlock" disabled><strong>Bet:</strong>
 								<div class="input-group col-md-3 center-block">
 									<input type="text" class="form-control" id="betAmount" placeholder="Bet amount">
 									<span class="input-group-btn">
-										<button class="btn btn-default" type="button" onclick="bet(true)" >Nice bet</button>
-										<button class="btn btn-default" type="button" onclick="bet(false)" >Negative bet</button>
+										<button class="btn btn-default" type="button" onclick="bet(true)" id="niceBetButton" >Nice bet</button>
+										<button class="btn btn-default" type="button" onclick="bet(false)" id="badBetButton" >Negative bet</button>
 									</span>
 								
 								</div>
@@ -132,28 +132,18 @@
 		
 		<div class="container max-width-960 ">
 			<div class="row ">
-				<h3>¿Pregunta 1?</h3>
-				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis tortor eget velit iaculis accumsan. Aenean id pellentesque enim, eget volutpat ante. Vivamus mattis lorem enim, eget eleifend sem vehicula eget. Nulla luctus arcu nec elit accumsan tincidunt. Sed tristique dui ac quam commodo, in iaculis mi auctor.</p>
+				<h3>How can I create a project?</h3>
+				<p>You have to go to the "New project" section and fill out the form. Make sure that you have enough ether to pay for the gas of the transaction.<br>The judge is a trusted third party that is going to verify the project. Due to limitations in the platform, the description have to be written in another web page, and then, put the link to the description.</p>
 				<hr>
 			</div>
 			<div class="row">
-				<h3>¿Pregunta 2?</h3>
-				<p>Suspendisse adipiscing enim dolor, eu blandit nunc faucibus ut. Nulla sapien erat, blandit eu neque ac, lacinia dictum leo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce eu lectus et nunc interdum semper id quis magna. </p>
+				<h3>How can fund a project?</h3>
+				<p>To fund a project go to the "Projects" section and click on the project name you want to fund, or put its ID in the search box at the top of the page.<br>Then, go to the project info, write the amount you want to contribute to the project where it says "Bet" and click on "Negative bet".</p>
 				<hr>
 			</div>
 			<div class="row">
-				<h3>¿Pregunta 3?</h3>
-				<p>Phasellus tempor massa dolor, ut convallis magna sodales non. Mauris dapibus elit sit amet aliquet sagittis. Fusce et convallis ligula. Sed ultricies lectus et odio suscipit suscipit. Aenean non gravida dolor. Cras justo justo, dapibus vel euismod non, posuere vitae erat. In molestie magna ut dignissim hendrerit. Nunc ultrices, tortor id gravida auctor, est ante feugiat mauris, id faucibus quam metus vitae augue. Ut sed condimentum magna.</p>
-				<hr>
-			</div>
-			<div class="row">
-				<h3>¿Pregunta 4?</h3>
-				<p>Sed ac pharetra enim, in ultrices arcu. Sed et iaculis lorem. Donec et nisi mattis, varius neque sed, consectetur lectus. Sed mollis orci congue, fermentum velit placerat, bibendum dui. Cras sit amet laoreet metus, ultricies dignissim lorem. Quisque tincidunt eu est porttitor viverra. Cras in lectus sem. </p>
-				<hr>
-			</div>
-			<div class="row">
-				<h3>¿Pregunta 5?</h3>
-				<p>Aenean tincidunt felis egestas, elementum arcu ut, rutrum lacus. Fusce sem purus, posuere non vulputate sit amet, tincidunt sed turpis. Quisque quis purus condimentum, vulputate metus vel, molestie lorem. Curabitur risus mauris, condimentum quis aliquam vitae, blandit luctus magna. Duis mi nunc, rhoncus sit amet dolor ut, commodo mollis lacus.</p>
+				<h3>How can I become a creator?</h3>
+				<p>First of all check if there is already people working on that project (number of nice bets). If there is nobody working on that project and you want to start working on it, you have to send a deposit as a nice bet. If there is already people working on it, then you will have to share the bounty.<br>The more you send as a deposit and the sooner you start working on the project, the more you will get of the bounty.</p>
 				<hr>
 			</div>
 		</div>
@@ -163,15 +153,16 @@
 			<div class="container max-width-960">
 				<div class="col-md-6">
 					<h2>About Betfunding</h2>
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis tortor eget velit iaculis accumsan. Aenean id pellentesque enim, eget volutpat ante. Vivamus mattis lorem enim, eget eleifend sem vehicula eget. Nulla luctus arcu nec elit accumsan tincidunt. Sed tristique dui ac quam commodo, in iaculis mi auctor.</p>
+					<p>Betfunding is a distributed crowdfunding platform that uses bets instead of donations to support artistic production and creative work. The platform is implemented as a smart contract on Ethereum blockchain, using ether cryptocurrency as the monetary system with no country restrictions.<br>
+					Unlike other crowdfunding platforms, in Betfunding the investors are the ones that suggest a project and look for creators by the creation of a bounty for their work.</p>
 				</div>
 				<div class="col-md-6 margin-form">
-					Twitter, Facebook, Github, contact, etc.
+					Github: https://github.com/EthereumUCM/Betfunding
 				</div>
 			</div>
 		</div>
 		<div class="row footer2">
-			2014-2015 Betfunding
+			2014-2015 Developed by Adrián Calvo María and Viktor Jacynycz García
 		</div>
 	</body>
 	<script src="./scripts.js"></script>
