@@ -20,9 +20,17 @@ function createProject() {
 	var pdescription = document.getElementById("pdescription").value;
 	var numDays = parseInt(document.getElementById("pdate").value);
 	
-	var pdate = Date.now() + (numDays*24*60*60*1000); // timestamp
-	
-	mainContractInstance.createProject(pname, pdescription, pdate, pjudge);
+	if(pname.length <= 32){
+		if(numDays > 0){
+			var pdate = Date.now() + (numDays*24*60*60*1000); // timestamp
+			
+			mainContractInstance.createProject(pname, pdescription, pdate, pjudge);
+		}else{
+			alert("Incorrect date");
+		}
+	}else{
+		alert("There is a limit of 32 characters in the name field");
+	}
 }
 
 // Put a bet into the blockchain
