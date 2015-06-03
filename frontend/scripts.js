@@ -36,10 +36,24 @@ function createProject() {
 // Put a bet into the blockchain
 function bet(isNiceBet) {
 	var pid = parseInt(document.getElementById("projectId").innerHTML);	
-	var amount = parseInt(document.getElementById("betAmount").value);	
+	var amount = parseInt(document.getElementById("betAmount").value);
 	
-	mainContractInstance.transact({value: amount}).bid(pid, isNiceBet);
-	// mainContractInstance.sendTransaction({value: amount}).bid(pid, isNiceBet); // New versions
+	var endDate = getProjectEndDate(pid);
+	var timestamp = Date.now();
+	var verified = mainContractInstance.call().getProjectVerified(pid);
+	var numProjects = getNumProjects();
+	
+	if(pid <= numProjects && pid > 0){
+		if(timestamp < endDate && !verified){
+			mainContractInstance.transact({value: amount}).bid(pid, isNiceBet);
+			// mainContractInstance.sendTransaction({value: amount}).bid(pid, isNiceBet); // New versions
+		}else{
+			alert("The project has ended");
+		}
+	}else{
+		alert("There is no project with that ID");
+	}
+	
 }
 
 
@@ -171,7 +185,7 @@ function postProject(id) {
 			document.getElementById("open").className = "label label-danger right";
 			document.getElementById("open").innerText = "Closed";
 			
-			document.getElementById("betAmount").innerHTML = "This project is closed.";
+			document.getElementById("betAmount").placeholder = "This project is closed.";
 			document.getElementById("betAmount").disabled = true;
 			document.getElementById("niceBetButton").disabled = true;
 			document.getElementById("badBetButton").disabled = true;
@@ -180,6 +194,11 @@ function postProject(id) {
 		}else{
 			document.getElementById("open").className = "label label-success right";
 			document.getElementById("open").innerText = "Open";
+			
+			document.getElementById("betAmount").placeholder = "Bet amount.";
+			document.getElementById("betAmount").disabled = false;
+			document.getElementById("niceBetButton").disabled = false;
+			document.getElementById("badBetButton").disabled = false;
 		}
 		
 		ok = true;
