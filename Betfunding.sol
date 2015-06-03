@@ -95,6 +95,7 @@ contract Betfunding {
 				aux = amountBet + (((1000*(project.numNiceGamblers-(numBets-1))/sum + 1000*amountBet/niceAmount)/2)*badAmount)/1000;
 				
 				a.send(aux);
+				numBets += 1;
 			}
 		}else if(!checkExpirationDate(projectID) && !project.projectVerified && project.numBadGamblers > 0){
 			/// The project has not been done on time
@@ -112,6 +113,7 @@ contract Betfunding {
 				aux = ((amountBet*totalAmount*1000)/badAmount)/1000;
 				
 				a.send(aux);
+				numBets += 1;
 			}
 		}
 	}
