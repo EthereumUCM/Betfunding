@@ -58,7 +58,7 @@ contract Betfunding {
 		}
 	}
 	
-	/// False if the project have ended
+	/// False if the project has ended
 	function checkExpirationDate(uint projectID) returns (bool hasExpired){
 		BetfundingProject project =	projectMapping[projectID];
 		
@@ -123,6 +123,7 @@ contract Betfunding {
 				project.projectVerified = true;
 				checkProjectEnd(projectID);
 		}
+		
 	}
 	
 	/** Getters */
@@ -204,5 +205,15 @@ contract Betfunding {
 		BetfundingProject project =	projectMapping[projectID];
 		
 		return project.projectVerified;
+	}
+	
+	/// True if the user has not bet before
+	function checkBet(uint projectID){
+		BetfundingProject project =	projectMapping[projectID];
+		
+		if(project.amountBets[msg.sender] == 0)
+			return true;
+		else
+			return false;
 	}
 }

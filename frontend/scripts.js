@@ -45,7 +45,13 @@ function bet(isNiceBet) {
 	
 	if(pid <= numProjects && pid > 0){
 		if(timestamp < endDate && !verified){
-			mainContractInstance.transact({value: amount}).bid(pid, isNiceBet);
+			var aux = mainContractInstance.call().checkBet();
+			
+			if(aux)
+				mainContractInstance.transact({value: amount}).bid(pid, isNiceBet);
+			else
+				alert("You have already bet with that address on this project. Use another address.");
+				
 			// mainContractInstance.sendTransaction({value: amount}).bid(pid, isNiceBet); // New versions
 		}else{
 			alert("The project has ended");
