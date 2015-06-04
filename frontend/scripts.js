@@ -188,6 +188,8 @@ function postProject(id) {
 		var timestamp = Date.now();
 		var verified = mainContractInstance.call().getProjectVerified(id);
 		if(timestamp > project["endDate"] || verified){
+			document.getElementById("pingButton").style.display = "inline";
+		
 			document.getElementById("open").className = "label label-danger right";
 			document.getElementById("open").innerText = "Closed";
 			
@@ -205,6 +207,8 @@ function postProject(id) {
 			document.getElementById("betAmount").disabled = false;
 			document.getElementById("niceBetButton").disabled = false;
 			document.getElementById("badBetButton").disabled = false;
+			
+			document.getElementById("pingButton").style.display = "none";
 		}
 		
 		ok = true;
@@ -253,15 +257,11 @@ function verify(){
 		mainContractInstance.transact({from: address}).verifyProject(id);
 }
 
-/* Test */
-
-function checkExpirationDate(id) {
+function ping(){
+	var id = parseInt(document.getElementById("projectId").innerHTML);
 	
-	var res = mainContractInstance.call().checkExpirationDate2(id);
-	
-	return res;
+	mainContractInstance.checkProjectEnd(id);
 }
-
 
 
 

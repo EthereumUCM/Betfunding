@@ -66,10 +66,6 @@ hr{
 	font-size:2em;
 }
 
-#project-info{
-	display: none;
-}
-
-#verificationButton{
+#verificationButton, #pingButton, #project-info{
 	display: none;
 }
