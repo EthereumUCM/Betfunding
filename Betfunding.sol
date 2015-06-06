@@ -40,11 +40,12 @@ contract Betfunding {
 	
 	/** Projects functions **/
 	
+	/// Bet on a project
 	function bid(uint projectID, bool isNiceBet){
 		BetfundingProject project =	projectMapping[projectID];
 		
-		/// Checks that the user has not bet before from the same address
-		/// COMMENTED FOR TESTING PURPOSES
+		// Checks that the user has not bet before from the same address
+		// COMMENTED FOR TESTING PURPOSES
 		if(project.amountBets[msg.sender] == 0){		
 			if(isNiceBet){
 				project.numNiceGamblers += 1; 
@@ -68,6 +69,7 @@ contract Betfunding {
 			return false;
 	}
 	
+	/// Check if it's time to end a project
 	function checkProjectEnd(uint projectID){
 		BetfundingProject project =	projectMapping[projectID];
 		uint niceAmount;
@@ -118,6 +120,7 @@ contract Betfunding {
 		}
 	}
 	
+	/// Verify a project
 	function verifyProject(uint projectID){
 		BetfundingProject project =	projectMapping[projectID];
 		
@@ -210,7 +213,7 @@ contract Betfunding {
 	}
 	
 	/// True if the user has not bet before
-	function checkBet(uint projectID){
+	function checkBet(uint projectID) returns (bool val){
 		BetfundingProject project =	projectMapping[projectID];
 		
 		if(project.amountBets[msg.sender] == 0)
