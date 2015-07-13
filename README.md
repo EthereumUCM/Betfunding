@@ -1,5 +1,5 @@
 # Betfunding
-Betfunding is part of a bachelor's thesis done in the Faculty of Computer Sciences of the Complutense University of Madrid.  
+Betfunding is part of a bachelor's thesis done on June 2015 in the Faculty of Computer Sciences of the Complutense University of Madrid.  
 [ES] Desarrollo de una plataforma de crowdfunding distribuida sobre Ethereum [(download)] (https://github.com/EthereumUCM/Betfunding/blob/master/pdf/MemoriaTFG.pdf)  
 [EN] Development of a distributed crowdfunding platform on Ethereum
 
