@@ -1,224 +1,242 @@
+pragma solidity ^0.4.0;
 contract Betfunding {
-	
-	struct BetfundingProject{
-		uint numNiceGamblers;
-		mapping(uint => address) niceGamblers;
-		
-		uint numBadGamblers;
-		mapping(uint => address) badGamblers;
-		
-		mapping(address => uint) amountBets;
-		
-		address projectCreator;
-		string32 projectName;
-		string32 projectDescription; // Link to page with description
-		uint expirationDate;
-		
-		bool projectVerified;
-		address verificationJudge;
+
+  struct Bets{
+    uint numSuccessGamblers;
+    uint successBounty;
+    mapping(uint => address) orderSuccessGamblers;
+
+    uint numFailGamblers;
+    uint failBounty;
+    mapping(uint => address) orderFailGamblers;
+
+    mapping(address => uint) amount;
+    uint distributionIndex;
+  }
+
+  struct Project{
+		address creator;
+		uint deadline; // timestamp
+		address oracle;
+		bool verified;
+		Bets bets;
+
+		string name; // to IPFS
+		string desc; // to IPFS
+		// TODO: Add IPFS hash
 	}
-	
+
 	// List of projects
-	mapping(uint => BetfundingProject) projectMapping;
-	uint numProjects;
-	
-	function Betfunding() {
-		numProjects = 0;
+	uint public numProjects;
+	mapping(uint => Project) projects;
+
+	// To claim the profits
+	mapping(address => uint) public balances;
+
+	// Events
+	event NewProject(uint indexed projectId, address creator);
+	event Bet(uint indexed projectId, address indexed gambler, uint amount, bool success);
+	event Result(uint indexed projectId, address indexed oracle, bool result);
+	event Distribution(uint indexed projectId);
+
+	modifier isFirstBet(uint projectId) {
+    if (projects[projectId].bets.amount[msg.sender] > 0 )
+      throw;
+    _;
+  }
+
+  modifier sendsEther() {
+    if (msg.value == 0 )
+      throw;
+    _;
+  }
+
+  modifier projectInRange(uint projectId) {
+    if (projectId >= numProjects)
+      throw;
+    _;
+  }
+
+  modifier onlyOracle(uint projectId) {
+    if (projects[projectId].oracle != msg.sender)
+      throw;
+    _;
+  }
+
+  modifier bettingTime(uint projectId) {
+    if (now > projects[projectId].deadline)
+      throw;
+    _;
+  }
+
+  modifier verificationTime(uint projectId) {
+    if (now < projects[projectId].deadline || now > projects[projectId].deadline + 7 days)
+      throw;
+    _;
+  }
+
+  modifier closed(uint projectId) {
+    if (now < projects[projectId].deadline + 7 days)
+      throw;
+    _;
+  }
+
+	/*
+	 * Functions
+	 */
+
+	// TODO: Change attributes name and description for IPFS hash
+	function createProject(string name, string desc, uint deadline, address oracle){
+		Project newProject = projects[numProjects];
+
+		newProject.creator = msg.sender;
+		newProject.deadline = deadline;
+		newProject.oracle = oracle;
+
+		// TODO: Change to IPFS hash
+		newProject.name = name;
+		newProject.desc = desc;
+
+        NewProject(numProjects, msg.sender);
+		numProjects++;
 	}
-	
-	/// Creates a new project
-	function createProject(string32 _projectName, string32 _projectDescription, uint _expirationDate, address _judge){
-		numProjects += 1;
-		
-		BetfundingProject newProject = projectMapping[numProjects];
-		newProject.projectName = _projectName;
-		newProject.projectCreator = msg.sender;
-		newProject.projectDescription =_projectDescription;
-		newProject.expirationDate = _expirationDate;
-		newProject.verificationJudge = _judge;
+
+	function bet(uint projectId, bool success)
+	  payable
+	  isFirstBet(projectId)
+	  projectInRange(projectId)
+	  sendsEther
+	  bettingTime(projectId)
+	{
+	  Bets bets = projects[projectId].bets;
+
+	  if(success){
+      bets.orderSuccessGamblers[bets.numSuccessGamblers] = msg.sender;
+      bets.successBounty += msg.value;
+      bets.numSuccessGamblers++;
+	  }else{
+      bets.orderFailGamblers[bets.numFailGamblers] = msg.sender;
+      bets.failBounty += msg.value;
+      bets.numFailGamblers++;
+	  }
+
+	  bets.amount[msg.sender] += msg.value;
+
+    Bet(projectId, msg.sender, msg.value, success);
 	}
-	
-	/** Projects functions **/
-	
-	/// Bet on a project
-	function bid(uint projectID, bool isNiceBet){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		// Checks that the user has not bet before from the same address
-		// COMMENTED FOR TESTING PURPOSES
-		if(project.amountBets[msg.sender] == 0){		
-			if(isNiceBet){
-				project.numNiceGamblers += 1; 
-				project.niceGamblers[project.numNiceGamblers] = msg.sender;
-				project.amountBets[msg.sender] = msg.value;
-			}else{
-				project.numBadGamblers += 1;
-				project.badGamblers[project.numBadGamblers] = msg.sender;
-				project.amountBets[msg.sender] = msg.value;
-			}
-		}
+
+	function verify(uint projectId, bool success)
+    projectInRange(projectId)
+    verificationTime(projectId)
+    onlyOracle(projectId)
+	{
+    projects[projectId].verified = success;
 	}
-	
-	/// False if the project has ended
-	function checkExpirationDate(uint projectID) returns (bool hasExpired){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		if(block.timestamp < project.expirationDate/1000)
-			return true;
-		else 
-			return false;
+
+	function updateBalances(uint projectId)
+    projectInRange(projectId)
+    closed(projectId)
+	{
+    Project project = projects[projectId];
+    uint txLimit;
+    address user;
+    uint amountBet;
+    uint bounty = project.bets.successBounty + project.bets.failBounty;
+    
+    if(project.verified){
+      // To avoid tx gas limit
+      txLimit = project.bets.distributionIndex + 100;
+      if(txLimit > project.bets.numSuccessGamblers){
+        txLimit = project.bets.numSuccessGamblers;
+    
+        Distribution(projectId); // last iteration
+      }
+    
+      // Distribution
+      while(project.bets.distributionIndex < txLimit){
+        user = project.bets.orderSuccessGamblers[project.bets.distributionIndex];
+        amountBet = project.bets.amount[user];
+    
+        // The user receives his share of the bounty
+        // Sumatory (used to weight by order):
+        uint sum = (project.bets.numSuccessGamblers * (project.bets.numSuccessGamblers + 1)) / 2;
+        //  Percent of bounty received by the user weighed by order of bets:
+        uint shareOrder = 10000*(project.bets.numSuccessGamblers-project.bets.distributionIndex)/sum;
+        // Percent of the bounty received by the user weighed by amount bet:
+        uint shareAmount = 10000*amountBet/project.bets.successBounty;
+        // Mean of the previous percents:
+        uint share = ((shareOrder+shareAmount)/2);
+        // Finally, the user gets back his bet + his share of the failBounty:
+        balances[user] += amountBet + (share*project.bets.failBounty)/10000;
+    
+        project.bets.distributionIndex++;
+      }
+    }else{
+      // To avoid tx gas limit
+      txLimit = project.bets.distributionIndex + 100;
+      if(txLimit > project.bets.numFailGamblers){
+        txLimit = project.bets.numFailGamblers;
+    
+        Distribution(projectId); // last iteration
+      }
+    
+      // Distribution
+      while(project.bets.distributionIndex < txLimit){
+        user = project.bets.orderFailGamblers[project.bets.distributionIndex];
+        amountBet = project.bets.amount[user];
+    
+        // The user receives his share of the bounty
+        balances[user] += ((amountBet*bounty*10000)/project.bets.failBounty)/10000;
+    
+        project.bets.distributionIndex++;
+      }
+    }
 	}
-	
-	/// Check if it's time to end a project
-	function checkProjectEnd(uint projectID){
-		BetfundingProject project =	projectMapping[projectID];
-		uint niceAmount;
-		uint badAmount;
-		uint totalAmount;
-		uint numBets;
-		address a;
-		uint amountBet;
-		uint aux;
-		
-		if(project.projectVerified && project.numNiceGamblers > 0){
-			/// The project has been done on time
-			niceAmount = getNiceBets(projectID);
-			badAmount = getBadBets(projectID);
-			totalAmount = niceAmount + badAmount;
-						
-			numBets = 1;
-			uint sum = (project.numNiceGamblers * (project.numNiceGamblers + 1)) / 2;
-			while(numBets <= project.numNiceGamblers){
-				a = project.niceGamblers[numBets];
-				amountBet = project.amountBets[project.niceGamblers[numBets]];
-				
-				/// There are no decimals, that's why we have to multiply it and then divide it by 1000
-				/// Weighed by order and amount
-				aux = amountBet + (((1000*(project.numNiceGamblers-(numBets-1))/sum + 1000*amountBet/niceAmount)/2)*badAmount)/1000;
-				
-				a.send(aux);
-				numBets += 1;
-			}
-		}else if(!checkExpirationDate(projectID) && !project.projectVerified && project.numBadGamblers > 0){
-			/// The project has not been done on time
-			niceAmount = getNiceBets(projectID);
-			badAmount = getBadBets(projectID);
-			totalAmount = niceAmount + badAmount;
-						
-			numBets = 1;
-			while(numBets <= project.numBadGamblers){
-				a = project.badGamblers[numBets];
-            	amountBet = project.amountBets[project.badGamblers[numBets]];
-				
-				/// There are no decimals, that's why we have to multiply it and then divide it by 1000
-				/// Weighed by amount
-				aux = ((amountBet*totalAmount*1000)/badAmount)/1000;
-				
-				a.send(aux);
-				numBets += 1;
-			}
-		}
+
+	function claimProfits(){
+	  uint amount = balances[msg.sender];
+	  balances[msg.sender] = 0;
+
+	  if(!msg.sender.send(amount))
+	    throw;
 	}
-	
-	/// Verify a project
-	function verifyProject(uint projectID){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		if(msg.sender == project.verificationJudge && checkExpirationDate(projectID)){
-				project.projectVerified = true;
-				checkProjectEnd(projectID);
-		}
-		
+
+	/*
+	 * Getters
+	 */
+
+	function getProject(uint i) constant projectInRange(i)
+	  returns(
+      address creator,
+      uint deadline,
+      address oracle,
+      bool verified,
+      string name,
+      string desc
+	  )
+	{
+	  creator = projects[i].creator;
+    deadline = projects[i].deadline;
+    oracle = projects[i].oracle;
+    verified = projects[i].verified;
+
+    // TODO: Change attributes name and description for IPFS hash
+    name = projects[i].name;
+    desc = projects[i].desc;
 	}
-	
-	/** Getters */
-	
-	function getNiceBets(uint projectID) returns (uint amount){
-		BetfundingProject project =	projectMapping[projectID];
-		uint numBets = 1;
-		amount = 0;
-		
-		while(numBets <= project.numNiceGamblers){
-			amount +=  project.amountBets[project.niceGamblers[numBets]];
-			numBets++;
-		}
-		
-		return amount;
-	}
-	
-	function getNumNiceBets(uint projectID) returns (uint num){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		return project.numNiceGamblers;
-	}
-	
-	function getBadBets(uint projectID) returns (uint amount){
-		BetfundingProject project =	projectMapping[projectID];
-		uint numBets = 1;
-		amount = 0;
-		
-		while(numBets <= project.numBadGamblers){
-			amount +=  project.amountBets[project.badGamblers[numBets]];
-			numBets++;
-		}
-		
-		return amount;
-	}
-	
-	function getNumBadBets(uint projectID) returns (uint num){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		return project.numBadGamblers;
-	}
-	
-	function getNumProjects() constant returns (uint num){
-		
-		return numProjects;
-	}
-	
-	function getProjectName(uint projectID) returns (string32 name){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		return project.projectName;
-	}
-	
-	function getProjectEndDate(uint projectID) returns (uint date){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		return project.expirationDate;
-	}
-	
-	function getProjectJudge(uint projectID) returns (address addr){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		return project.verificationJudge;
-	}
-	
-	function getProjectDescription(uint projectID) returns (string32 description){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		return project.projectDescription;
-	}
-	
-	function getProjectCreator(uint projectID) returns (address addr){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		return project.projectCreator;
-	}
-	
-	function getProjectVerified(uint projectID) returns (bool val){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		return project.projectVerified;
-	}
-	
-	/// True if the user has not bet before
-	function checkBet(uint projectID) returns (bool val){
-		BetfundingProject project =	projectMapping[projectID];
-		
-		if(project.amountBets[msg.sender] == 0)
-			return true;
-		else
-			return false;
+
+	function getBets(uint i) constant projectInRange(i)
+	  returns(
+      uint numSuccessGamblers,
+      uint successBounty,
+      uint numFailGamblers,
+      uint failBounty
+	  )
+	{
+  	numSuccessGamblers = projects[i].bets.numSuccessGamblers;
+    successBounty = projects[i].bets.successBounty;
+
+    numFailGamblers = projects[i].bets.numFailGamblers;
+    failBounty = projects[i].bets.failBounty;
 	}
 }
